@@ -1,13 +1,12 @@
-package comp3011.assignment1;
+package com.myname.speechapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Assignment1ApplicationTests {
+class SpeechAppApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: speech-app
+  profiles:
+    default: local
+  threads:
+    virtual:
+      enabled: true # Tomcat request threads become virtual, making blocking OpenAI calls cheap for 200+ concurrent requests.
+
+server:
+  port: 8080
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: titan
