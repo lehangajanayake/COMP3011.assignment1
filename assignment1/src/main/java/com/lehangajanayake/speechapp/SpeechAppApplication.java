@@ -1,4 +1,4 @@
-package com.myname.speechapp;
+package com.lehangajanayake.speechapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

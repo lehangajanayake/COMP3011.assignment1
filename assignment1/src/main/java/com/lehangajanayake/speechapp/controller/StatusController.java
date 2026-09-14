@@ -1,6 +1,6 @@
-package com.myname.speechapp.controller;
+package com.lehangajanayake.speechapp.controller;
 
-import com.myname.speechapp.service.StatsService;
+import com.lehangajanayake.speechapp.service.StatsService;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;

@@ -1,8 +1,8 @@
-package com.myname.speechapp.controller;
+package com.lehangajanayake.speechapp.controller;
 
-import com.myname.speechapp.dto.TranscriptionResponse;
-import com.myname.speechapp.service.StatsService;
-import com.myname.speechapp.service.TranscriptionService;
+import com.lehangajanayake.speechapp.dto.TranscriptionResponse;
+import com.lehangajanayake.speechapp.service.StatsService;
+import com.lehangajanayake.speechapp.service.TranscriptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

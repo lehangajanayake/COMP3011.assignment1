@@ -1,4 +1,4 @@
-package com.myname.speechapp.controller;
+package com.lehangajanayake.speechapp.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

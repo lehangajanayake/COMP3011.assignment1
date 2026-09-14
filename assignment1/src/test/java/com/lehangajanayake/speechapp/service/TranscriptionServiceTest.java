@@ -1,19 +1,19 @@
-package com.myname.speechapp.service;
+package com.lehangajanayake.speechapp.service;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 import static org.springframework.http.HttpMethod.POST;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.client.MockRestServiceServer;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
-import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.client.MockRestServiceServer;
 
 class TranscriptionServiceTest {
 

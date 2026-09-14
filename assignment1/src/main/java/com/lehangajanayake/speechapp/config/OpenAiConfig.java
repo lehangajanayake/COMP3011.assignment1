@@ -1,4 +1,4 @@
-package com.myname.speechapp.config;
+package com.lehangajanayake.speechapp.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.myname.speechapp.dto;
+package com.lehangajanayake.speechapp.dto;
 
 /**
  * JSON response returned after an audio transcription attempt.

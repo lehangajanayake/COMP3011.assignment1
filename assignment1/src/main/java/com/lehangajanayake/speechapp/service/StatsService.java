@@ -1,4 +1,4 @@
-package com.myname.speechapp.service;
+package com.lehangajanayake.speechapp.service;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
