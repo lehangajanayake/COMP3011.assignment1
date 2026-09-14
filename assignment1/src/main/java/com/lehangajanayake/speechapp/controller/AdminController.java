@@ -12,30 +12,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lehangajanayake.speechapp.dto.UptimeResponse;
 import com.lehangajanayake.speechapp.service.StatsService;
 
 /**
  * Exposes placeholder operational endpoints for uptime, statistics, and shutdown.
  */
 @RestController
-@RequestMapping("/api/status")
-public class StatusController {
+@RequestMapping("/api/v1/admin")
+public class AdminController {
 
     private final Instant applicationStartedAt;
     private final StatsService statsService;
     private final ApplicationContext applicationContext;
 
-    public StatusController(StatsService statsService, ApplicationContext applicationContext) {
+    public AdminController(StatsService statsService, ApplicationContext applicationContext) {
         this.applicationStartedAt = Instant.now();
         this.statsService = statsService;
         this.applicationContext = applicationContext;
     }
 
-    @GetMapping("/uptime/")
-    public ResponseEntity<Map<String, Object>> uptime() {
-        return ResponseEntity.ok(Map.of(
-                "startedAt", applicationStartedAt,
-                "uptimeSeconds", Duration.between(applicationStartedAt, Instant.now()).toSeconds()));
+    @GetMapping("/uptime")
+    public ResponseEntity<UptimeResponse> uptime() {
+        Instant utcNow = Instant.now();
+        Duration uptime = Duration.between(applicationStartedAt, utcNow);
+        double uptimeSeconds = uptime.toNanos() / 1_000_000_000.0;
+
+        return ResponseEntity.ok(new UptimeResponse(applicationStartedAt, utcNow, uptimeSeconds));
     }
 
     @GetMapping("/stats")
