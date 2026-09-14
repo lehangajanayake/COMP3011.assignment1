@@ -6,9 +6,12 @@ spring:
   threads:
     virtual:
       enabled: true # Tomcat request threads become virtual, making blocking OpenAI calls cheap for 200+ concurrent requests.
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
 server:
   port: 8080
+  shutdown: graceful
 
 openai:
   api-key: ${OPENAI_API_KEY}
