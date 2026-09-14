@@ -2,10 +2,10 @@ package com.myname.speechapp.service;
 
 import com.myname.speechapp.dto.TranscriptionResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -62,7 +62,7 @@ public class TranscriptionService {
         }
     }
 
-    private ByteArrayResource audioPart(MultipartFile audio) throws IOException {
+    private HttpEntity<ByteArrayResource> audioPart(MultipartFile audio) throws IOException {
         String filename = audio.getOriginalFilename() == null
                 ? "recording.webm"
                 : audio.getOriginalFilename();
@@ -70,12 +70,16 @@ public class TranscriptionService {
                 ? MediaType.APPLICATION_OCTET_STREAM
                 : MediaType.parseMediaType(audio.getContentType());
 
-        return new ByteArrayResource(audio.getBytes()) {
+        ByteArrayResource resource = new ByteArrayResource(audio.getBytes()) {
             @Override
             public String getFilename() {
                 return filename;
             }
         };
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("file", filename);
+        headers.setContentType(contentType);
+        return new HttpEntity<>(resource, headers);
     }
 
     private long elapsedMillis(long startedAt) {

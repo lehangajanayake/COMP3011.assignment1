@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local environment and JDK bundles ###
+.env
+.env.*
+!.env.example
+*.jdk/
