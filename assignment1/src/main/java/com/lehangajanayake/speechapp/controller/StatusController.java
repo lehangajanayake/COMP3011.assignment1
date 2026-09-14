@@ -1,9 +1,9 @@
 package com.lehangajanayake.speechapp.controller;
 
-import com.lehangajanayake.speechapp.service.StatsService;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lehangajanayake.speechapp.service.StatsService;
 
 /**
  * Exposes placeholder operational endpoints for uptime, statistics, and shutdown.
@@ -29,7 +31,7 @@ public class StatusController {
         this.applicationContext = applicationContext;
     }
 
-    @GetMapping("/uptime")
+    @GetMapping("/uptime/")
     public ResponseEntity<Map<String, Object>> uptime() {
         return ResponseEntity.ok(Map.of(
                 "startedAt", applicationStartedAt,
