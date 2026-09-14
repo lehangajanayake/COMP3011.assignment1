@@ -24,13 +24,13 @@ written to logs, or included in an error response.
 | --- | --- | --- |
 | `GET` | `/` | Serves the recording page |
 | `POST` | `/api/transcribe` | Accepts multipart field `audio` and returns `{ "text": "..." }` |
-| `GET` | `/api/status/uptime` | Returns application start time and elapsed seconds |
-| `GET` | `/api/status/stats` | Returns received, successful, and failed transcription counts |
-| `POST` | `/api/status/shutdown` | Requests a Spring application shutdown; protect this endpoint before deployment |
+| `GET` | `/api/v1/admin/uptime` | Returns UTC server start time, current UTC time, and uptime in seconds |
+| `GET` | `/api/v1/admin/stats` | Returns received, successful, and failed transcription counts |
+| `POST` | `/api/v1/admin/shutdown` | Requests a graceful Spring application shutdown; protect this endpoint before deployment |
 
-The exact status paths are kept together under `/api/status` because no YAML
-endpoint specification was included in the repository. They can be changed in
-`StatusController` when the specification is supplied.
+The shutdown endpoint returns `202 Accepted` when shutdown begins and `409
+Conflict` when another shutdown request is already in progress. Graceful
+shutdown waits up to 30 seconds per shutdown phase for in-flight work to finish.
 
 ## Concurrency and tests
 
