@@ -35,6 +35,7 @@ public class TranscriptionController {
         statsService.recordRequestReceived();
         try {
             TranscriptionResponse response = transcriptionService.transcribe(audio);
+            log.info("Speech transcription succeeded: {}", response);
             statsService.recordRequestSucceeded();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException exception) {
