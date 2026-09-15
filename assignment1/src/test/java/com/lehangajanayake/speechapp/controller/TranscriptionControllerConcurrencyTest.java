@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.lehangajanayake.speechapp.dto.TranscriptionResponse;
-import com.lehangajanayake.speechapp.service.StatsService;
 import com.lehangajanayake.speechapp.service.TranscriptionService;
 
 class TranscriptionControllerConcurrencyTest {
@@ -31,7 +30,6 @@ class TranscriptionControllerConcurrencyTest {
     @Test
     void acceptsMoreThan200SimultaneousBlockingRequestsWithoutRacingCounters() throws Exception {
         TranscriptionService transcriptionService = mock(TranscriptionService.class);
-        StatsService statsService = new StatsService();
         AtomicInteger entered = new AtomicInteger();
         CountDownLatch allRequestsEnteredService = new CountDownLatch(1);
         CountDownLatch releaseRequests = new CountDownLatch(1);
@@ -45,7 +43,7 @@ class TranscriptionControllerConcurrencyTest {
         });
 
         MockMvc mockMvc = MockMvcBuilders
-                .standaloneSetup(new TranscriptionController(transcriptionService, statsService))
+                .standaloneSetup(new TranscriptionController(transcriptionService))
                 .build();
         ExecutorService executor = Executors.newFixedThreadPool(REQUEST_COUNT);
         List<Future<?>> requests = new ArrayList<>(REQUEST_COUNT);
@@ -66,9 +64,5 @@ class TranscriptionControllerConcurrencyTest {
             releaseRequests.countDown();
             executor.shutdownNow();
         }
-
-        assertThat(statsService.getRequestsReceived()).isEqualTo(REQUEST_COUNT);
-        assertThat(statsService.getRequestsSucceeded()).isEqualTo(REQUEST_COUNT);
-        assertThat(statsService.getRequestsFailed()).isZero();
     }
 }

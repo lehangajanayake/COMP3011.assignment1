@@ -23,19 +23,24 @@ class TranscriptionServiceTest {
         MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
         RestClient client = builder.build();
         String apiKey = System.getenv().getOrDefault("OPENAI_API_KEY", "");
-        TranscriptionService service = new TranscriptionService(client, apiKey);
+        StatsService statsService = new StatsService();
+        TranscriptionService service = new TranscriptionService(client, apiKey, statsService);
 
         server.expect(requestTo("https://api.openai.com/v1/audio/transcriptions"))
                 .andExpect(method(POST))
                 .andExpect(header("Authorization", "Bearer " + apiKey))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("gpt-4o-mini-transcribe")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("sample audio")))
-                .andRespond(withSuccess("{\"text\":\"stubbed transcript\"}", MediaType.APPLICATION_JSON));
+            .andRespond(withSuccess(
+                "{\"text\":\"stubbed transcript\",\"usage\":{\"input_tokens\":12,\"output_tokens\":4}}",
+                MediaType.APPLICATION_JSON));
 
         MockMultipartFile audio = new MockMultipartFile(
                 "audio", "sample.webm", "audio/webm", "sample audio".getBytes(StandardCharsets.UTF_8));
 
         assertThat(service.transcribe(audio).text()).isEqualTo("stubbed transcript");
+        assertThat(statsService.getInputTokens()).isEqualTo(12);
+        assertThat(statsService.getOutputTokens()).isEqualTo(4);
         server.verify();
     }
 }

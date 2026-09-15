@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lehangajanayake.speechapp.dto.TranscriptionResponse;
-import com.lehangajanayake.speechapp.service.StatsService;
 import com.lehangajanayake.speechapp.service.TranscriptionService;
 
 /**
@@ -23,31 +22,26 @@ public class TranscriptionController {
     private static final Logger log = LoggerFactory.getLogger(TranscriptionController.class);
 
     private final TranscriptionService transcriptionService;
-    private final StatsService statsService;
-
-    public TranscriptionController(TranscriptionService transcriptionService, StatsService statsService) {
+    public TranscriptionController(TranscriptionService transcriptionService) {
         this.transcriptionService = transcriptionService;
-        this.statsService = statsService;
     }
 
     @PostMapping(path = "/api/transcribe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> transcribe(@RequestParam("audio") MultipartFile audio) {
-        statsService.recordRequestReceived();
         try {
             TranscriptionResponse response = transcriptionService.transcribe(audio);
             log.info("Speech transcription succeeded: {}", response);
-            statsService.recordRequestSucceeded();
             return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException exception) {
-            statsService.recordRequestFailed();
             return ResponseEntity.badRequest().body("An audio file is required.");
+
         } catch (org.springframework.web.client.RestClientException exception) {
-            statsService.recordRequestFailed();
             log.warn("Speech transcription provider request failed: {}", exception.getMessage(), exception);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body("The transcription service is temporarily unavailable.");
+
         } catch (Exception exception) {
-            statsService.recordRequestFailed();
             log.error("Speech transcription failed: {}", exception.getClass().getSimpleName());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Transcription failed. Please try again.");

@@ -28,10 +28,14 @@ public class TranscriptionService {
 
     private final RestClient openAiRestClient;
     private final String apiKey;
+    private final StatsService statsService;
 
-    public TranscriptionService(RestClient openAiRestClient, @Value("${openai.api-key}") String apiKey) {
+    public TranscriptionService(RestClient openAiRestClient,
+            @Value("${openai.api-key}") String apiKey,
+            StatsService statsService) {
         this.openAiRestClient = openAiRestClient;
         this.apiKey = apiKey;
+        this.statsService = statsService;
     }
 
     public TranscriptionResponse transcribe(MultipartFile audio) {
@@ -55,6 +59,12 @@ public class TranscriptionService {
 
             if (response == null || response.text() == null) {
                 throw new IllegalStateException("The transcription provider returned no text");
+            }
+
+            if (response.usage() != null) {
+                statsService.recordTokenUsage(
+                        response.usage().inputTokens(),
+                        response.usage().outputTokens());
             }
 
             log.info("Speech transcription completed in {} ms", elapsedMillis(startedAt));
