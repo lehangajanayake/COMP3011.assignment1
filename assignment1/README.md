@@ -25,7 +25,6 @@ written to logs, or included in an error response.
 | `GET` | `/` | Serves the recording page |
 | `POST` | `/api/transcribe` | Accepts multipart field `audio` and returns `{ "text": "..." }` |
 | `GET` | `/api/v1/admin/uptime` | Returns UTC server start time, current UTC time, and uptime in seconds |
-| `GET` | `/api/v1/admin/stats` | Returns received, successful, and failed transcription counts |
 | `POST` | `/api/v1/admin/shutdown` | Requests a graceful Spring application shutdown; protect this endpoint before deployment |
 | `GET` | `/api/v1/global/stats` | Returns cumulative input and output token usage since server start |
 

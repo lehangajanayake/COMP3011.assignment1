@@ -1,5 +1,7 @@
 package com.lehangajanayake.speechapp.controller;
 
+import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lehangajanayake.speechapp.dto.ErrorResponse;
 import com.lehangajanayake.speechapp.dto.TranscriptionResponse;
 import com.lehangajanayake.speechapp.service.TranscriptionService;
 
@@ -34,17 +37,32 @@ public class TranscriptionController {
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException exception) {
-            return ResponseEntity.badRequest().body("An audio file is required.");
+            return ResponseEntity.badRequest().body(new ErrorResponse(
+                    Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "An audio file is required.",
+                "/api/transcribe"));
 
         } catch (org.springframework.web.client.RestClientException exception) {
             log.warn("Speech transcription provider request failed: {}", exception.getMessage(), exception);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                    .body("The transcription service is temporarily unavailable.");
+                .body(new ErrorResponse(
+                        Instant.now(),
+                    HttpStatus.BAD_GATEWAY.value(),
+                    HttpStatus.BAD_GATEWAY.getReasonPhrase(),
+                    "The transcription service is temporarily unavailable.",
+                    "/api/transcribe"));
 
         } catch (Exception exception) {
             log.error("Speech transcription failed: {}", exception.getClass().getSimpleName());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Transcription failed. Please try again.");
+                .body(new ErrorResponse(
+                        Instant.now(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    "Transcription failed. Please try again.",
+                    "/api/transcribe"));
         }
     }
 }

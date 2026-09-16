@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -26,6 +27,24 @@ import com.lehangajanayake.speechapp.service.TranscriptionService;
 class TranscriptionControllerConcurrencyTest {
 
     private static final int REQUEST_COUNT = 256;
+
+        @Test
+        void returnsErrorResponseForMissingAudio() throws Exception {
+        TranscriptionService transcriptionService = mock(TranscriptionService.class);
+        when(transcriptionService.transcribe(any()))
+            .thenThrow(new IllegalArgumentException("missing audio"));
+
+        MockMvc mockMvc = MockMvcBuilders
+            .standaloneSetup(new TranscriptionController(transcriptionService))
+            .build();
+
+        mockMvc.perform(multipart("/api/transcribe"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.message").value("An audio file is required."))
+            .andExpect(jsonPath("$.path").value("/api/transcribe"));
+        }
 
     @Test
     void acceptsMoreThan200SimultaneousBlockingRequestsWithoutRacingCounters() throws Exception {
