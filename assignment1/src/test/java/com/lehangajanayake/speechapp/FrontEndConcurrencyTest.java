@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "openai.api-key=test-only-placeholder")
-class EmbeddedServerConcurrencyTest {
+class FrontEndConcurrencyTEst {
 
     private static final int REQUEST_COUNT = 256;
 
