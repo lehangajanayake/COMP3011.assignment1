@@ -53,6 +53,14 @@ button:disabled {
     color: #1d5c4b;
 }
 
+#recordingTimer {
+    margin: 0.5rem 0 1rem;
+    color: #c6763d;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
 #errorMessage {
     margin: 1rem 0;
     padding: 0.85rem 1rem;
