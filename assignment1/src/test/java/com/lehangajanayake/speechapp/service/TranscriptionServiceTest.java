@@ -1,6 +1,11 @@
 package com.lehangajanayake.speechapp.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -16,6 +21,28 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import org.springframework.web.client.RestClient;
 
 class TranscriptionServiceTest {
+
+    @Test
+    void keepsAllConcurrentTokenUpdates() throws Exception {
+        StatsService statsService = new StatsService();
+        ExecutorService executor = Executors.newFixedThreadPool(256);
+        List<Future<?>> updates = new ArrayList<>();
+
+        try {
+            for (int updateNumber = 0; updateNumber < 256; updateNumber++) {
+                updates.add(executor.submit(() -> statsService.recordTokenUsage(12, 4)));
+            }
+
+            for (Future<?> update : updates) {
+                update.get();
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        assertThat(statsService.getInputTokens()).isEqualTo(256 * 12L);
+        assertThat(statsService.getOutputTokens()).isEqualTo(256 * 4L);
+    }
 
     @Test
     void sendsAudioAndModelToStubbedSpeechProvider() {

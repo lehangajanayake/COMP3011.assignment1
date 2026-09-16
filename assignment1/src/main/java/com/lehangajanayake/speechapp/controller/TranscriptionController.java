@@ -30,8 +30,11 @@ public class TranscriptionController {
     }
 
     @PostMapping(path = "/api/transcribe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> transcribe(@RequestParam("audio") MultipartFile audio) {
+    public ResponseEntity<?> transcribe(@RequestParam(value = "audio", required = false) MultipartFile audio) {
         try {
+            if (audio == null) {
+                throw new IllegalArgumentException("An audio file is required");
+            }
             TranscriptionResponse response = transcriptionService.transcribe(audio);
             log.info("Speech transcription succeeded: {}", response);
             return ResponseEntity.ok(response);
