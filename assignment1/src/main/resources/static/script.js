@@ -1,5 +1,6 @@
 const recordButton = document.getElementById('recordButton');
 const statusElement = document.getElementById('status');
+const errorElement = document.getElementById('errorMessage');
 const resultElement = document.getElementById('result');
 
 let mediaRecorder;
@@ -23,6 +24,16 @@ function recordingFilename(mimeType) {
     return `recording.${extensionByType[mediaType] || 'webm'}`;
 }
 
+function clearError() {
+    errorElement.textContent = '';
+    errorElement.hidden = true;
+}
+
+function showError(message) {
+    errorElement.textContent = message;
+    errorElement.hidden = false;
+}
+
 recordButton.addEventListener('click', async () => {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
@@ -30,6 +41,7 @@ recordButton.addEventListener('click', async () => {
     }
 
     try {
+        clearError();
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         audioChunks = [];
         const mimeType = recordingMimeType();
@@ -52,13 +64,15 @@ recordButton.addEventListener('click', async () => {
         statusElement.textContent = 'Recording...';
         resultElement.textContent = '';
     } catch (error) {
-        statusElement.textContent = 'Microphone access was unavailable.';
+        statusElement.textContent = 'Ready';
+        showError('Microphone access was unavailable. Check your browser permissions and try again.');
     }
 });
 
 async function submitRecording(audioBlob, filename) {
     recordButton.disabled = true;
     statusElement.textContent = 'Transcribing...';
+    clearError();
 
     const formData = new FormData();
     formData.append('audio', audioBlob, filename);
@@ -68,16 +82,30 @@ async function submitRecording(audioBlob, filename) {
             method: 'POST',
             body: formData
         });
-        const payload = await response.json();
+        const responseText = await response.text();
+        let payload;
+
+        try {
+            payload = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+            payload = {};
+        }
 
         if (!response.ok) {
-            throw new Error('Transcription request failed');
+            throw new Error(payload.message || `Request failed (${response.status})`);
+        }
+
+        if (typeof payload.text !== 'string') {
+            throw new Error('The transcription response was invalid.');
         }
 
         resultElement.textContent = payload.text || '';
         statusElement.textContent = 'Ready';
     } catch (error) {
-        statusElement.textContent = 'Transcription failed. Please try again.';
+        showError(error instanceof Error
+            ? error.message
+            : 'Transcription failed. Please try again.');
+        statusElement.textContent = 'Ready';
     } finally {
         recordButton.disabled = false;
         recordButton.textContent = 'Start recording';

@@ -53,6 +53,14 @@ button:disabled {
     color: #1d5c4b;
 }
 
+#errorMessage {
+    margin: 1rem 0;
+    padding: 0.85rem 1rem;
+    border-left: 4px solid #a83232;
+    background: #fbeaea;
+    color: #7b2020;
+}
+
 #result {
     min-height: 5rem;
     padding: 1rem;
